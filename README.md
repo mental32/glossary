@@ -37,10 +37,14 @@ discrimination or where the smallest diff can be produced by [Git](#Git).
 > [revision control](#Revision-Control) system distributed as
 > [open source](#Open-Source) under the [Apache License](#Apache-License).
 
+***
+
 ### Git
 
 A [VCS](#VCS) created in 2005 by [Linus Torvalds](#Linus-Torvalds) to aid in
 the development of the [Linux kernel](#Linux).
+
+***
 
 ### Kernel
 
@@ -54,10 +58,14 @@ the development of the [Linux kernel](#Linux).
 > operating system, the kernel often manages protection of programs and 
 > multitasking.
 
+***
+
 ### Linux
 
 A [Kernel](#Kernel) started by [Linus Torvalds](#Linus-Torvalds) and maintained
 by the [Linux software foundation.](#Linux-Software-Foundation)
+
+***
 
 ### Linux Software Foundation
 #### Linux Foundation
@@ -68,6 +76,8 @@ by the [Linux software foundation.](#Linux-Software-Foundation)
 > 2000 as a merger between Open Source Development Labs and the Free Standards
 > Group to standardize [Linux](#Linux).
 
+***
+
 ### Linus Torvalds
 
 Linus Benedict Torvalds is a Finnish-American software engineer who is the
@@ -76,10 +86,14 @@ creator and, historically, the principal developer of the
 [Linux based operating systems](#Linux-Based-Operating-Systems) and other
 operating systems such as [Android](#Android) and [Chrome OS](#Chrome-OS).
 
+***
+
 ### Mercurial
 
 Mercurial is a [VCS](#VCS) started in 2005 April 19 by Matt Mackall who served
 as its lead developer until late 2016.
+
+***
 
 ### VCS
 #### Version Control System
@@ -94,3 +108,5 @@ Examples of VC systems include:
  - [Git](#Git)
  - [Apache subversion](#Apache-Subversion)
  - [Mercurial](#Mercurial)
+
+***
