@@ -83,6 +83,7 @@ as its lead developer until late 2016.
 
 ### VCS
 #### Version Control System
+#### Revision Control
 
 A VCS is a solution commonly used in software engineering that solves the
 issue of tracking, labeling, and journaling changes (aka "diffs") across a
