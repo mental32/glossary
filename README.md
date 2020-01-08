@@ -27,3 +27,48 @@ The entries are interned in alphabetical order (by their h3 tag) without
 discrimination or where the smallest diff can be produced by [Git](#Git).
 
 ## [Terms](#Index)
+
+### Apache Subversion
+#### SVN
+
+> Extract from wikipedia:
+>
+> Apache Subversion is a [software versioning](#Software-Versioning) and
+> [revision control](#Revision-Control) system distributed as
+> [open source](#Open-Source) under the [Apache License](#Apache-License).
+
+### Git
+
+A [VCS](#VCS) created in 2005 by [Linus Torvalds](#Linus-Torvalds) to aid in
+the development of the [Linux kernel](#Linux).
+
+### Linux
+
+A [Kernel](#Kernel) started by [Linus Torvalds](#Linus-Torvalds) and maintained
+by the [Linux software foundation.](#Linux-Software-Foundation)
+
+### Linus Torvalds
+
+Linus Benedict Torvalds is a Finnish-American software engineer who is the
+creator and, historically, the principal developer of the
+[Linux kernel](#Linux), which is the [kernel](#Kernel) for
+[Linux based operating systems](#Linux-Based-Operating-Systems) and other
+operating systems such as [Android](#Android) and [Chrome OS](#Chrome-OS).
+
+### Mercurial
+
+Mercurial is a [VCS](#VCS) started in 2005 April 19 by Matt Mackall who served
+as its lead developer until late 2016.
+
+### VCS
+#### Version Control System
+
+A VCS is a solution commonly used in software engineering that solves the
+issue of tracking, labeling, and journaling changes (aka "diffs") across a
+period of time.
+
+Examples of VC systems include:
+
+ - [Git](#Git)
+ - [Apache subversion](#Apache-Subversion)
+ - [Mercurial](#Mercurial)
