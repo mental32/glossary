@@ -120,12 +120,12 @@ def _add(glossary: Glossary) -> bool:
     check_call(f"$EDITOR {filename}", shell=True)
 
     with open(filename) as inf:
-        body = inf.read()
+        raw = inf.read()
 
-    if not body.startswith("\n"):
-        body = "\n" + body
+    if not raw.startswith("\n"):
+        raw = "\n" + raw
 
-    body = body.split("\n#")
+    body = raw.split("\n#")
     matches = list(filter(None, [_RE_TEMPLATED.fullmatch(part) for part in body]))
 
     results = {
@@ -133,9 +133,15 @@ def _add(glossary: Glossary) -> bool:
         for match in matches
     }
 
+
     if results["name"] == "TEXT":
         print("Skipping add, no changes appear to have been made...", file=stderr)
         return False
+
+    if "desc" not in results:
+        _, end = next(filter((lambda m: m["header"].lower() == "name"), matches)).span()
+        desc = re_compile(r"\n?# Desc\?\n?").sub(" ", raw[end + 1:])
+        results["desc"] = desc.strip()
 
     glossary[results["name"]] = {
         "synonyms": [],
