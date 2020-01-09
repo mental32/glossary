@@ -9,6 +9,7 @@ from typing import List, Dict
 from pprint import pprint
 from subprocess import check_call
 from tempfile import mkstemp
+from textwrap import fill
 
 _RE_TAG: Pattern = re_compile(r"(?P<header>#{3,4}) (?P<content>[\w ]+)")
 _RE_TEMPLATED: Pattern = re_compile(r"^ (?P<header>\w+)\?\n(?P<content>.+)\n*")
@@ -16,6 +17,7 @@ _RE_TEMPLATED: Pattern = re_compile(r"^ (?P<header>\w+)\?\n(?P<content>.+)\n*")
 Glossary = Dict[str, List[str]]
 
 # Core API
+
 
 def parse_term(source: str) -> Glossary:
     assert source.strip()
@@ -65,23 +67,27 @@ def load_glossary(filename: str) -> Glossary:
             elif cursor is not None:
                 collected[cursor] += f"{line!s}\n"
 
-    return reduce(
-        (lambda x, y: {**x, **y}),
-        map(parse_term, collected.values()),
-    )
+    return reduce((lambda x, y: {**x, **y}), map(parse_term, collected.values()),)
 
 
 def dump_glossary(filename: str, glossary: Glossary) -> str:
+    def maybe_fill(source: str) -> str:
+        return "\n".join(
+            [line if len(line) <= 80 else fill(line, 80) for line in source.split("\n")]
+        )
+
+    # fmt: off
     fmt = "\n".join([
         (entry := glossary[key])
         and (
             f"### {key}\n"
             + "".join(f"#### {synonym}\n" for synonym in entry["synonyms"])
-            + f"{entry['content']}\n"
+            + f"{maybe_fill(entry['content'])}\n"
             + "***\n"
         )
         for key in sorted(glossary)
     ])
+    # fmt: on
 
     with open(filename, "r+") as file:
         while True:
@@ -100,8 +106,10 @@ def _report(glossary: Glossary) -> bool:
     print(f"Summary: There are {len(glossary)} terms in the glossary.")
     return False
 
+
 def _format(glossary: Glossary) -> bool:
     return True
+
 
 TEMPLATE = """
 # Name?
@@ -111,8 +119,9 @@ TEXT
 TEXT
 """.strip()
 
+
 def _add(glossary: Glossary) -> bool:
-    fd, filename = mkstemp(suffix=".tmp")
+    fd, filename = mkstemp(suffix=".tmp.md")
 
     with open(fd, "w+") as inf:
         inf.write(TEMPLATE)
@@ -128,11 +137,7 @@ def _add(glossary: Glossary) -> bool:
     body = raw.split("\n#")
     matches = list(filter(None, [_RE_TEMPLATED.fullmatch(part) for part in body]))
 
-    results = {
-        match["header"].lower(): match["content"].strip()
-        for match in matches
-    }
-
+    results = {match["header"].lower(): match["content"].strip() for match in matches}
 
     if results["name"] == "TEXT":
         print("Skipping add, no changes appear to have been made...", file=stderr)
@@ -140,15 +145,13 @@ def _add(glossary: Glossary) -> bool:
 
     if "desc" not in results:
         _, end = next(filter((lambda m: m["header"].lower() == "name"), matches)).span()
-        desc = re_compile(r"\n?# Desc\?\n?").sub(" ", raw[end + 1:])
+        desc = re_compile(r"\n?# Desc\?\n?").sub(" ", raw[end + 1 :])
         results["desc"] = desc.strip()
 
-    glossary[results["name"]] = {
-        "synonyms": [],
-        "content": f"\n{results['desc']}\n"
-    }
+    glossary[results["name"]] = {"synonyms": [], "content": f"\n{results['desc']}\n"}
 
     return True
+
 
 ACTIONS = {
     "report": _report,
