@@ -2,22 +2,47 @@
 """A script that helps with the parsing and composing of the glossary."""
 from argparse import ArgumentParser
 from itertools import takewhile
+from functools import reduce
 from re import compile as re_compile, Pattern
 from sys import stderr, exit as sys_exit
 from typing import List, Dict
 from pprint import pprint
+from subprocess import check_call
+from tempfile import mkstemp
 
 _RE_TAG: Pattern = re_compile(r"(?P<header>#{3,4}) (?P<content>[\w ]+)")
+_RE_TEMPLATED: Pattern = re_compile(r"^ (?P<header>\w+)\?\n(?P<content>.+)\n*")
 
 Glossary = Dict[str, List[str]]
 
 # Core API
 
+def parse_term(source: str) -> Glossary:
+    assert source.strip()
+
+    line, raw = source.split("\n", maxsplit=1)
+    sliced = raw.rstrip().split("\n")
+
+    match = _RE_TAG.fullmatch(line)
+    assert match is not None, (repr(match), line)
+
+    header, name = match.groups()
+    assert len(header) == 3, f"Invalid header length for entry: {line!r}"
+
+    body = sliced[: sliced.index("***")]
+
+    synonyms = [
+        _RE_TAG.fullmatch(line)["content"]
+        for line in takewhile((lambda line: line[:5] == "#### "), body)
+    ]
+
+    return {name: {"synonyms": synonyms, "content": "\n".join(body[len(synonyms) :])}}
+
 
 def load_glossary(filename: str) -> Glossary:
     """Parse some glossary."""
-    collected: List[str] = []
-    positions: List[int] = []
+    collected: Dict[int, str] = {}
+    cursor = None
 
     with open(filename) as file:
         stream = map(str.rstrip, file)
@@ -31,33 +56,19 @@ def load_glossary(filename: str) -> Glossary:
             if len(line) >= 80:
                 print(f"Ln:{index!r} is over 80 characters.", file=stderr)
 
-            collected.append(line)
-
             if line[:4] == "### ":
-                positions.append(index)
+                if cursor in collected:
+                    collected[cursor] = collected[cursor].rstrip()
 
-    terms = {}
+                cursor = index
+                collected[index] = f"{line!s}\n"
+            elif cursor is not None:
+                collected[cursor] += f"{line!s}\n"
 
-    for position in positions:
-        line = collected[position]
-
-        match = _RE_TAG.fullmatch(line)
-        assert match is not None, (repr(match), line)
-
-        header, name = match.groups()
-        assert len(header) == 3, f"Invalid header length for entry: {line!r}"
-
-        sliced = collected[position + 1 :]
-        body = sliced[: sliced.index("***")]
-
-        synonyms = [
-            _RE_TAG.fullmatch(line)["content"]
-            for line in takewhile((lambda line: line[:5] == "#### "), body)
-        ]
-
-        terms[name] = {"synonyms": synonyms, "content": "\n".join(body[len(synonyms) :])}
-
-    return terms
+    return reduce(
+        (lambda x, y: {**x, **y}),
+        map(parse_term, collected.values()),
+    )
 
 
 def dump_glossary(filename: str, glossary: Glossary) -> str:
@@ -85,19 +96,58 @@ def dump_glossary(filename: str, glossary: Glossary) -> str:
 # Action handlers
 
 
-def _report(_, glossary: Glossary) -> None:
+def _report(glossary: Glossary) -> bool:
     print(f"Summary: There are {len(glossary)} terms in the glossary.")
+    return False
 
+def _format(glossary: Glossary) -> bool:
+    return True
 
-def _format(args, glossary: Glossary) -> None:
-    # Serializing glossaries automatically formats them :D
-    dump_glossary(args.file, glossary)
-    print("Formatted glossary.")
+TEMPLATE = """
+# Name?
+TEXT
 
+# Desc?
+TEXT
+""".strip()
+
+def _add(glossary: Glossary) -> bool:
+    fd, filename = mkstemp(suffix=".tmp")
+
+    with open(fd, "w+") as inf:
+        inf.write(TEMPLATE)
+
+    check_call(f"$EDITOR {filename}", shell=True)
+
+    with open(filename) as inf:
+        body = inf.read()
+
+    if not body.startswith("\n"):
+        body = "\n" + body
+
+    body = body.split("\n#")
+    matches = list(filter(None, [_RE_TEMPLATED.fullmatch(part) for part in body]))
+
+    results = {
+        match["header"].lower(): match["content"].strip()
+        for match in matches
+    }
+
+    if results["name"] == "TEXT":
+        print("Skipping add, no changes appear to have been made...", file=stderr)
+        return False
+
+    glossary[results["name"]] = {
+        "synonyms": [],
+        "content": f"\n{results['desc']}\n"
+    }
+
+    return True
 
 ACTIONS = {
     "report": _report,
     "fmt": _format,
+    "add": _add,
 }
 
 
@@ -111,7 +161,10 @@ def main():
     action = args.action
     glossary = load_glossary(args.file)
 
-    ACTIONS[args.action](args, glossary)
+    should_dump = ACTIONS[args.action](glossary)
+
+    if should_dump:
+        dump_glossary(args.file, glossary)
 
 
 if __name__ == "__main__":
