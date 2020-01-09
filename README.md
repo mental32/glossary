@@ -51,12 +51,22 @@ the development of the [Linux kernel](#Linux).
 > Extract from wiki.osdev.org:
 >
 > The kernel is the central component of an operating system. It is a natural
-> consequence of an operating system's need to manage resources, and often the 
-> most important part of a operating system. Its responsibilities include 
-> managing memory and devices and also providing an interface for software 
-> applications to use those resources. Depending on the architecture of the 
-> operating system, the kernel often manages protection of programs and 
+> consequence of an operating system's need to manage resources, and often the
+> most important part of a operating system. Its responsibilities include
+> managing memory and devices and also providing an interface for software
+> applications to use those resources. Depending on the architecture of the
+> operating system, the kernel often manages protection of programs and
 > multitasking.
+
+***
+
+### Linus Torvalds
+
+Linus Benedict Torvalds is a Finnish-American software engineer who is the
+creator and, historically, the principal developer of the
+[Linux kernel](#Linux), which is the [kernel](#Kernel) for
+[Linux based operating systems](#Linux-Based-Operating-Systems) and other
+operating systems such as [Android](#Android) and [Chrome OS](#Chrome-OS).
 
 ***
 
@@ -75,16 +85,6 @@ by the [Linux software foundation.](#Linux-Software-Foundation)
 > The Linux Foundation (LF) is a non-profit technology consortium founded in
 > 2000 as a merger between Open Source Development Labs and the Free Standards
 > Group to standardize [Linux](#Linux).
-
-***
-
-### Linus Torvalds
-
-Linus Benedict Torvalds is a Finnish-American software engineer who is the
-creator and, historically, the principal developer of the
-[Linux kernel](#Linux), which is the [kernel](#Kernel) for
-[Linux based operating systems](#Linux-Based-Operating-Systems) and other
-operating systems such as [Android](#Android) and [Chrome OS](#Chrome-OS).
 
 ***
 
