@@ -39,6 +39,18 @@ discrimination or where the smallest diff can be produced by [Git](#Git).
 
 ***
 
+### Directed acyclic graph
+#### DAG
+
+In mathematics, graph theory and computer science, a DAG is a finite directed
+graph (A graph made up of verticies connected by a set of edges) with no direct
+cycles (Following any node n or vertex v will always lead toward a terminal leaf
+and will never loop).
+
+They have the propery of topological sorting/ordering (Needs further elaboration.)
+
+***
+
 ### Git
 
 A [VCS](#VCS) created in 2005 by [Linus Torvalds](#Linus-Torvalds) to aid in
